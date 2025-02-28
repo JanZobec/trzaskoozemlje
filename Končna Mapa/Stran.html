@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karta Tržaško Ozemlje, trenutni in zgodovinski rajoni</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #canvas-container {
+            width: 1600px;
+            height: 800px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            margin: auto;
+            position: relative;
+            cursor: grab;
+            background: #f0f0f0;
+        }
+        #canvas {
+            position: absolute;
+            width: 4000px;
+            height: 4000px;
+            transform-origin: top left;
+        }
+        .layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            user-drag: none;
+            user-select: none;
+            pointer-events: none;
+        }
+        input[type="checkbox"] {
+            transform: scale(1.5);
+            margin-right: 10px;
+        }
+        label {
+            font-size: 18px;
+            margin: 5px;
+        }
+        #controls {
+            margin-bottom: 10px; /* Added space after checkboxes */
+        }
+    </style>
+</head>
+<body>
+    <h2>Karta Tržaško Ozemlje, trenutni in zgodovinski rajoni</h2>
+    
+    <div id="controls">
+        <label><input type="checkbox" checked onclick="toggleLayer(1)"> Tržaško Ozemlje</label>
+        <label><input type="checkbox" checked onclick="toggleLayer(2)"> Trenutni rajoni</label>
+        <label><input type="checkbox" checked onclick="toggleLayer(3)"> Zgodovinski rajoni</label>
+    </div>
+
+    <div id="canvas-container">
+        <div id="canvas">
+            <img src="Karta_Background.png" class="layer" id="layer0">
+            <img src="Karta_TO.png" class="layer" id="layer1">
+            <img src="Karta_C.png" class="layer" id="layer2">
+            <img src="Karta_S.png" class="layer" id="layer3">
+        </div>
+    </div>
+    
+    <script>
+        let scale = 0.4; // Initial zoom
+        let canvas = document.getElementById("canvas");
+        let posX = -894, posY = -388; // Initial position (centered)
+        let isDragging = false;
+        let startX, startY;
+
+        function updateTransform() {
+            canvas.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+        }
+        updateTransform();
+
+        // Zoom centered on the cursor
+        document.getElementById("canvas-container").addEventListener("wheel", function(event) {
+            event.preventDefault();
+            let scaleFactor = 0.1;
+            let oldScale = scale;
+
+            // Get mouse position relative to the canvas container
+            let rect = this.getBoundingClientRect();
+            let mouseX = event.clientX - rect.left;
+            let mouseY = event.clientY - rect.top;
+
+            if (event.deltaY < 0) {
+                scale = Math.min(scale + scaleFactor * scale, 10); // Max zoom = 10
+            } else {
+                scale = Math.max(scale - scaleFactor * scale, 0.2); // Min zoom = 0.2
+            }
+
+            // Adjust position so zoom happens at the cursor
+            let scaleRatio = scale / oldScale;
+            posX = mouseX - (mouseX - posX) * scaleRatio;
+            posY = mouseY - (mouseY - posY) * scaleRatio;
+
+            updateTransform();
+        });
+
+        // Dragging functionality
+        document.getElementById("canvas-container").addEventListener("mousedown", function(event) {
+            isDragging = true;
+            startX = event.clientX - posX;
+            startY = event.clientY - posY;
+            canvas.style.cursor = "grabbing";
+        });
+
+        window.addEventListener("mousemove", function(event) {
+            if (!isDragging) return;
+            posX = event.clientX - startX;
+            posY = event.clientY - startY;
+            updateTransform();
+        });
+
+        window.addEventListener("mouseup", function() {
+            isDragging = false;
+            canvas.style.cursor = "grab";
+        });
+
+        // Toggle image layers without affecting transform
+        function toggleLayer(index) {
+            let layer = document.getElementById("layer" + index);
+            layer.style.visibility = layer.style.visibility === "hidden" ? "visible" : "hidden";
+        }
+    </script>
+</body>
+</html>
