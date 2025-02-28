@@ -50,7 +50,7 @@
     <h2>Karta Tržaško Ozemlje, trenutni in zgodovinski rajoni</h2>
     
     <div id="controls">
-        <label><input type="checkbox" checked onclick="toggleLayer(1)"> Tržaško Ozemlje</label>
+        <label><input type="checkbox" id="checkbox1" checked onclick="toggleLayer(1)"> Tržaško Ozemlje</label>
         <label><input type="checkbox" id="checkbox2" onclick="toggleLayer(2)"> Trenutni rajoni (boljša karta)</label>
         <label><input type="checkbox" id="checkbox3" onclick="toggleLayer(3)"> Trenutni in Zgodovinski rajoni</label>
     </div>
@@ -142,11 +142,11 @@
             canvas.style.cursor = "grab";
         });
 
-        // Toggle image layers without affecting transform
+        // Toggle image layers based on checkbox status
         function toggleLayer(index) {
             let layer = document.getElementById("layer" + index);
-            let checkbox = document.querySelector(`#checkbox${index}`);
-            
+            let checkbox = document.querySelector(`#checkbox${index}`); // Fixed checkbox indexing
+
             if (checkbox.checked) {
                 layer.style.visibility = "visible";
             } else {
