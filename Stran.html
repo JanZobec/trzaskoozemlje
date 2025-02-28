@@ -51,16 +51,16 @@
     
     <div id="controls">
         <label><input type="checkbox" checked onclick="toggleLayer(1)"> Tržaško Ozemlje</label>
-        <label><input type="checkbox" checked onclick="toggleLayer(2)"> Trenutni rajoni (boljša karta)</label>
-        <label><input type="checkbox" checked onclick="toggleLayer(3)"> Trenutni in Zgodovinski rajoni</label>
+        <label><input type="checkbox" id="checkbox2" onclick="toggleLayer(2)"> Trenutni rajoni (boljša karta)</label>
+        <label><input type="checkbox" id="checkbox3" onclick="toggleLayer(3)"> Trenutni in Zgodovinski rajoni</label>
     </div>
 
     <div id="canvas-container">
         <div id="canvas">
             <img src="Karta_Background.png" class="layer" id="layer0">
             <img src="Karta_TO.png" class="layer" id="layer1">
-            <img src="Karta_C.png" class="layer" id="layer2">
-            <img src="Karta_S.png" class="layer" id="layer3">
+            <img src="Karta_C.png" class="layer" id="layer2" style="visibility: hidden;">
+            <img src="Karta_S.png" class="layer" id="layer3" style="visibility: hidden;">
         </div>
     </div>
     
@@ -70,6 +70,27 @@
         let posX = -894, posY = -388; // Initial position (centered)
         let isDragging = false;
         let startX, startY;
+
+        let imagesLoaded = 0;
+        let totalImages = 4; // You have 4 images
+
+        // Check if all images are loaded
+        function checkImagesLoaded() {
+            imagesLoaded++;
+            if (imagesLoaded === totalImages) {
+                // Enable zoom functionality
+                document.getElementById("canvas-container").style.pointerEvents = "auto";
+            }
+        }
+
+        // Mark each image as loaded
+        let images = document.querySelectorAll('.layer');
+        images.forEach(image => {
+            image.onload = checkImagesLoaded;
+        });
+
+        // Initially disable zoom until images are loaded
+        document.getElementById("canvas-container").style.pointerEvents = "none";
 
         function updateTransform() {
             canvas.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
@@ -124,7 +145,13 @@
         // Toggle image layers without affecting transform
         function toggleLayer(index) {
             let layer = document.getElementById("layer" + index);
-            layer.style.visibility = layer.style.visibility === "hidden" ? "visible" : "hidden";
+            let checkbox = document.querySelector(`#checkbox${index}`);
+            
+            if (checkbox.checked) {
+                layer.style.visibility = "visible";
+            } else {
+                layer.style.visibility = "hidden";
+            }
         }
     </script>
 </body>
