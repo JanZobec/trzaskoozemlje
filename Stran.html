@@ -49,7 +49,9 @@
             position: absolute;
             width: 4000px;
             height: 4000px;
-            transform-origin: top left;
+            transform-origin: center;
+            left: 50%;
+            top: 50%;
         }
         .layer {
             position: absolute;
@@ -59,6 +61,7 @@
             pointer-events: none;
         }
         #debug {
+            display: none;  /* Hide the debug information */
             position: absolute;
             top: 10px;
             left: 10px;
@@ -67,6 +70,7 @@
             padding: 5px;
             border-radius: 5px;
             font-size: 14px;
+            z-index: 1000;
         }
     </style>
 </head>
@@ -94,44 +98,45 @@
         let canvas = document.getElementById("canvas");
         let container = document.getElementById("canvas-container");
 
-        // Calculate the initial scale
+        // Calculate the initial scale and position
         let scaleX = container.clientWidth / canvas.clientWidth;
         let scaleY = container.clientHeight / canvas.clientHeight;
-        let scale = Math.min(scaleX, scaleY) * 0.9; // Choose the smaller scale to fit both dimensions and 10% smaller
+        let scale = Math.min(scaleX, scaleY) * 0.9;  // Add back the 0.9 multiplier
 
-        let posX = 0;
-        let posY = (container.clientHeight - (canvas.clientHeight * scale)) / 2;
+        // Initialize position to center the scaled canvas
+        // X position remains the same
+        let posX = -(canvas.clientWidth * scale) / 2;
+        // Adjust Y position to move content down
+        let posY = -(canvas.clientHeight * scale) / 2 + (container.clientHeight / 2);
+
         let isDragging = false;
         let startX, startY;
         let debugLabel = document.getElementById("debug");
 
         let imagesLoaded = 0;
         let images = document.querySelectorAll('.layer');
-        let totalImages = images.length; // Get the total number of images dynamically
+        let totalImages = images.length;
 
-        // Check if all images are loaded
         function checkImagesLoaded() {
             imagesLoaded++;
             if (imagesLoaded === totalImages) {
-                // Enable zoom functionality
                 document.getElementById("canvas-container").style.pointerEvents = "auto";
-                // Center the canvas
-                posX = 0;
-                posY = (container.clientHeight - (canvas.clientHeight * scale)) / 2;
                 updateTransform();
             }
         }
 
-        // Mark each image as loaded
         images.forEach(image => {
-            image.onload = checkImagesLoaded;
+            if (image.complete) {
+                checkImagesLoaded();
+            } else {
+                image.onload = checkImagesLoaded;
+            }
         });
 
-        // Initially disable zoom until images are loaded
         document.getElementById("canvas-container").style.pointerEvents = "none";
 
         function updateTransform() {
-            canvas.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+            canvas.style.transform = `translate(calc(-50% + ${posX}px), calc(-50% + ${posY}px)) scale(${scale})`;
             debugLabel.textContent = `X: ${posX.toFixed(2)}, Y: ${posY.toFixed(2)}, Container Width: ${container.clientWidth}, Container Height: ${container.clientHeight}, Canvas Width: ${canvas.clientWidth}, Canvas Height: ${canvas.clientHeight}, Scale: ${scale.toFixed(2)}`;
         }
         updateTransform();
@@ -142,8 +147,8 @@
             let oldScale = scale;
 
             let rect = this.getBoundingClientRect();
-            let mouseX = event.clientX - rect.left;
-            let mouseY = event.clientY - rect.top;
+            let mouseX = event.clientX - rect.left - rect.width/2;
+            let mouseY = event.clientY - rect.top - rect.height/2;
 
             if (event.deltaY < 0) {
                 scale = Math.min(scale + scaleFactor * scale, 100); 
@@ -160,15 +165,17 @@
 
         document.getElementById("canvas-container").addEventListener("mousedown", function(event) {
             isDragging = true;
-            startX = event.clientX - posX;
-            startY = event.clientY - posY;
+            let rect = this.getBoundingClientRect();
+            startX = event.clientX - posX - rect.width/2;
+            startY = event.clientY - posY - rect.height/2;
             canvas.style.cursor = "grabbing";
         });
 
         window.addEventListener("mousemove", function(event) {
             if (!isDragging) return;
-            posX = event.clientX - startX;
-            posY = event.clientY - startY;
+            let rect = container.getBoundingClientRect();
+            posX = event.clientX - startX - rect.width/2;
+            posY = event.clientY - startY - rect.height/2;
             updateTransform();
         });
 
