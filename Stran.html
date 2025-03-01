@@ -80,7 +80,7 @@
         <label><input type="checkbox" id="checkbox3" onclick="toggleLayer(3)"> Trenutni in Zgodovinski rajoni</label>
     </div>
 
-    <div id="debug">X: 0, Y: 0</div>
+    <div id="debug">X: 0, Y: 0, Container Width: 0, Container Height: 0, Canvas Width: 0, Canvas Height: 0, Scale: 0</div>
 
     <div id="canvas-container">
         <div id="canvas">
@@ -92,16 +92,48 @@
     </div>
     
     <script>
-        let scale = 0.4; // Initial zoom
         let canvas = document.getElementById("canvas");
-        let posX = -510, posY = -210; // Back to the original centered position
-	let isDragging = false;
+        let container = document.getElementById("canvas-container");
+
+        // Calculate the initial scale
+        let scaleX = container.clientWidth / canvas.clientWidth;
+        let scaleY = container.clientHeight / canvas.clientHeight;
+        let scale = Math.min(scaleX, scaleY)*0.9; // Choose the smaller scale to fit both dimensions and 10% smaller
+
+        let posX = (container.clientWidth - (canvas.clientWidth * scale)) / 2;
+        let posY = (container.clientHeight - (canvas.clientHeight * scale)) / 2;
+        let isDragging = false;
         let startX, startY;
         let debugLabel = document.getElementById("debug");
 
+        let imagesLoaded = 0;
+        let images = document.querySelectorAll('.layer');
+        let totalImages = images.length; // Get the total number of images dynamically
+
+        // Check if all images are loaded
+        function checkImagesLoaded() {
+            imagesLoaded++;
+            if (imagesLoaded === totalImages) {
+                // Enable zoom functionality
+                document.getElementById("canvas-container").style.pointerEvents = "auto";
+                // Center the canvas
+                posX = (container.clientWidth - (canvas.clientWidth * scale)) / 2;
+                posY = (container.clientHeight - (canvas.clientHeight * scale)) / 2;
+                updateTransform();
+            }
+        }
+
+        // Mark each image as loaded
+        images.forEach(image => {
+            image.onload = checkImagesLoaded;
+        });
+
+        // Initially disable zoom until images are loaded
+        document.getElementById("canvas-container").style.pointerEvents = "none";
+
         function updateTransform() {
             canvas.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
-            debugLabel.textContent = `X: ${posX.toFixed(2)}, Y: ${posY.toFixed(2)}`;
+            debugLabel.textContent = `X: ${posX.toFixed(2)}, Y: ${posY.toFixed(2)}, Container Width: ${container.clientWidth}, Container Height: ${container.clientHeight}, Canvas Width: ${canvas.clientWidth}, Canvas Height: ${canvas.clientHeight}, Scale: ${scale.toFixed(2)}`;
         }
         updateTransform();
 
