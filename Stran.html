@@ -42,7 +42,7 @@
             overflow: hidden;
             position: relative;
             cursor: grab;
-            background: #f0f0f0;
+            background: #333333;
             flex-grow: 1;
         }
         #canvas {
@@ -58,7 +58,8 @@
             width: 100%;
             height: 100%;
             user-select: none;
-            pointer-events: none;
+            pointer-events: auto;
+            cursor: inherit;
         }
         #debug {
             display: none;  /* Hide the debug information */
@@ -168,7 +169,7 @@
             let rect = this.getBoundingClientRect();
             startX = event.clientX - posX - rect.width/2;
             startY = event.clientY - posY - rect.height/2;
-            canvas.style.cursor = "grabbing";
+            container.style.cursor = "grabbing";
         });
 
         window.addEventListener("mousemove", function(event) {
@@ -181,7 +182,7 @@
 
         window.addEventListener("mouseup", function() {
             isDragging = false;
-            canvas.style.cursor = "grab";
+            container.style.cursor = "grab";
         });
 
         function toggleLayer(index) {
