@@ -85,23 +85,31 @@
     
     aboutBtn.onclick = function(e) {
       e.preventDefault();
-      modal.style.display = 'block';
       modal.classList.remove('hide');
+      modal.style.display = 'block';
+      // Force reflow to ensure display change takes effect before animation
+      modal.offsetHeight;
       modal.classList.add('show');
     }
     
     closeBtn.onclick = function(e) {
       e.stopPropagation();
       modal.classList.remove('show');
-      modal.style.display = 'none';
-      
+      modal.classList.add('hide');
+      setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('hide');
+      }, 900);
     }
     
     window.onclick = function(event) {
       if (event.target == modal) {
         modal.classList.remove('show');
-        modal.style.display = 'none';
-
+        modal.classList.add('hide');
+        setTimeout(() => {
+          modal.style.display = 'none';
+          modal.classList.remove('hide');
+        }, 900);
       }
     }
   </script>

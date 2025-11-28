@@ -226,6 +226,14 @@ label {
     animation: fadeIn 1s;
 }
 
+.modal.hide {
+    display: block;
+    animation: fadeOut 1s ease-out;
+}
+
+.modal.hide .modal-content {
+    animation: modalFadeOut 1s ease-out;
+}
 
 
 .modal-content {
@@ -249,7 +257,7 @@ label {
     font-size: 35px;
     font-weight: bold;
     cursor: pointer;
-    transition: color 0.3s;
+    transition: color 1s;
 }
 
 .close:hover {
@@ -264,6 +272,17 @@ label {
 @keyframes fadeOut {
     from { opacity: 1; }
     to { opacity: 0; }
+}
+
+@keyframes modalFadeOut {
+    from { 
+        opacity: 1;
+        transform: scale(1);
+    }
+    to { 
+        opacity: 0;
+        transform: scale(0.90);
+    }
 }
 
 @keyframes slideIn {
