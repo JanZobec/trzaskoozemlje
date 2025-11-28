@@ -1,10 +1,101 @@
 <!DOCTYPE html>
-<html>
+<html lang="sl">
 <head>
-  <meta http-equiv="refresh" content="0; url=Stran.html">
-  <link rel="stylesheet" href="/static/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tržaško Ozemlje - Domov</title>
+  <link rel="stylesheet" href="static/styles.css">
 </head>
 <body>
-  <p>Redirecting to <a href="Stran.html">Stran.html</a>...</p>
+  <div class="menu">
+    <a href="#" id="aboutBtn" data-sl="O strani" data-en="About">O strani</a>
+    <div style="position: relative;">
+      <button class="lang-switcher" id="langBtn" onclick="toggleDropdown(event)">Slovenščina</button>
+      <div class="lang-dropdown" id="langDropdown">
+        <div class="lang-option" onclick="switchLanguage('sl')">Slovenščina</div>
+        <div class="lang-option" onclick="switchLanguage('en')">English</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="intro-container">
+    <div class="intro-content">
+      <h1>Tržaško Ozemlje</h1>
+      <p id="mainText" data-sl="Raziščite interaktivne karte, ki prikazujejo trenutne in zgodovinske okraje Tržaškega Ozemlja" data-en="Explore interactive maps showing current and historical districts of the Trieste Territory">Raziščite interaktivne karte, ki prikazujejo trenutne in zgodovinske okraje Tržaškega Ozemlja</p>
+      <a href="Stran.html" class="btn-primary" id="viewMapBtn" data-sl="Prikaži karto" data-en="View Map">Prikaži karto</a>
+    </div>
+  </div>
+  
+  <div id="aboutModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="aboutTitle" data-sl="O strani" data-en="About">O strani</h2>
+      <p id="aboutText1" data-sl="To spletno stran je ustvarila ekipa" data-en="This website was created by the">To spletno stran je ustvarila ekipa <strong>Janina</strong>.</p>
+      <p id="aboutText2" data-sl="Interaktivna karta zagotavlja celovit pregled Tržaškega Ozemlja, vključno s trenutnimi upravnimi okraji in zgodovinskimi mejami." data-en="The interactive map provides a comprehensive view of the Trieste Territory (Tržaško Ozemlje), including both current administrative districts and historical boundaries.">Interaktivna karta zagotavlja celovit pregled Tržaškega Ozemlja, vključno s trenutnimi upravnimi okraji in zgodovinskimi mejami.</p>
+    </div>
+  </div>
+  
+  <script>
+    let currentLang = 'sl';
+    
+    function toggleDropdown(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById('langDropdown');
+      dropdown.classList.toggle('show');
+    }
+    
+    function switchLanguage(lang) {
+      if (lang === currentLang) {
+        document.getElementById('langDropdown').classList.remove('show');
+        return;
+      }
+      
+      currentLang = lang;
+      const elements = document.querySelectorAll('[data-sl][data-en]');
+      
+      elements.forEach(el => {
+        if (el.tagName === 'INPUT' || el.tagName === 'BUTTON') {
+          el.value = el.getAttribute('data-' + currentLang);
+        } else {
+          const text = el.getAttribute('data-' + currentLang);
+          if (el.id === 'aboutText1') {
+            el.innerHTML = text + ' <strong>Janina</strong>.';
+          } else {
+            el.textContent = text;
+          }
+        }
+      });
+      
+      document.getElementById('langBtn').textContent = currentLang === 'sl' ? 'Slovenščina' : 'English';
+      document.getElementById('langDropdown').classList.remove('show');
+    }
+    
+    // Close dropdown when clicking outside
+    window.addEventListener('click', function(event) {
+      const dropdown = document.getElementById('langDropdown');
+      if (dropdown.classList.contains('show')) {
+        dropdown.classList.remove('show');
+      }
+    });
+    
+    const modal = document.getElementById('aboutModal');
+    const aboutBtn = document.getElementById('aboutBtn');
+    const closeBtn = document.querySelector('.close');
+    
+    aboutBtn.onclick = function(e) {
+      e.preventDefault();
+      modal.style.display = 'block';
+    }
+    
+    closeBtn.onclick = function() {
+      modal.style.display = 'none';
+    }
+    
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+  </script>
 </body>
 </html>
