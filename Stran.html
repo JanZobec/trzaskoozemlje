@@ -8,11 +8,15 @@
 </head>
 <body>
 
+    <div class="menu" style="left: 20px; right: auto;">
+        <a href="index.html" id="backBtn">Nazaj</a>
+    </div>
+
     <div id="controls">
-        <h2>Karta Tržaško Ozemlje, trenutni in zgodovinski rajoni</h2>
-        <label><input type="checkbox" id="checkbox1" checked onclick="toggleLayer(1)"> Tržaško Ozemlje</label>
-        <label><input type="checkbox" id="checkbox2" onclick="toggleLayer(2)"> Trenutni rajoni (boljša karta)</label>
-        <label><input type="checkbox" id="checkbox3" onclick="toggleLayer(3)"> Trenutni in Zgodovinski rajoni</label>
+        <h2 id="pageTitle" data-sl="Karta Tržaško Ozemlje, trenutni in zgodovinski rajoni" data-en="Trieste Territory Map, current and historical districts">Karta Tržaško Ozemlje, trenutni in zgodovinski rajoni</h2>
+        <label><input type="checkbox" id="checkbox1" checked onclick="toggleLayer(1)"> <span data-sl="Tržaško Ozemlje" data-en="Trieste Territory">Tržaško Ozemlje</span></label>
+        <label><input type="checkbox" id="checkbox2" onclick="toggleLayer(2)"> <span data-sl="Trenutni rajoni (boljša karta)" data-en="Current districts (better map)">Trenutni rajoni (boljša karta)</span></label>
+        <label><input type="checkbox" id="checkbox3" onclick="toggleLayer(3)"> <span data-sl="Trenutni in Zgodovinski rajoni" data-en="Current and Historical districts">Trenutni in Zgodovinski rajoni</span></label>
     </div>
 
     <div id="debug">X: 0, Y: 0, Container Width: 0, Container Height: 0, Canvas Width: 0, Canvas Height: 0, Scale: 0</div>
@@ -121,6 +125,23 @@
             let checkbox = document.querySelector(`#checkbox${index}`); 
             layer.style.visibility = checkbox.checked ? "visible" : "hidden";
         }
+
+        // Get language from URL or localStorage
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentLang = urlParams.get('lang') || localStorage.getItem('preferredLang') || 'sl';
+        
+        // Set back button text based on language with arrow
+        const backBtn = document.getElementById('backBtn');
+        backBtn.textContent = '← ' + (currentLang === 'sl' ? 'Nazaj' : 'Back');
+        
+        // Apply translations to all elements with data attributes
+        const elements = document.querySelectorAll('[data-sl][data-en]');
+        elements.forEach(el => {
+            const text = el.getAttribute('data-' + currentLang);
+            if (el.tagName === 'H2' || el.tagName === 'SPAN') {
+                el.textContent = text;
+            }
+        });
     </script>
 </body>
 </html>

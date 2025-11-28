@@ -23,7 +23,7 @@
       <h1>Tržaško Ozemlje</h1>
       <p id="mainText" data-sl="Raziščite interaktivne karte, ki prikazujejo trenutne in zgodovinske okraje Tržaškega Ozemlja" data-en="Explore interactive maps showing current and historical districts of the Trieste Territory">Raziščite interaktivne karte, ki prikazujejo trenutne in zgodovinske okraje Tržaškega Ozemlja</p>
       <br>
-      <a href="Stran.html" class="btn-primary" id="viewMapBtn" data-sl="Prikaži karto" data-en="View Map">Prikaži karto</a>
+      <a href="#" class="btn-primary" id="viewMapBtn" data-sl="Prikaži karto" data-en="View Map" onclick="goToMap(event)">Prikaži karto</a>
     </div>
   </div>
   
@@ -38,6 +38,12 @@
   
   <script>
     let currentLang = 'sl';
+    
+    function goToMap(e) {
+      e.preventDefault();
+      localStorage.setItem('preferredLang', currentLang);
+      window.location.href = 'Stran.html?lang=' + currentLang;
+    }
     
     function toggleDropdown(event) {
       event.stopPropagation();
