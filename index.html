@@ -86,15 +86,22 @@
     aboutBtn.onclick = function(e) {
       e.preventDefault();
       modal.style.display = 'block';
+      modal.classList.remove('hide');
+      modal.classList.add('show');
     }
     
-    closeBtn.onclick = function() {
+    closeBtn.onclick = function(e) {
+      e.stopPropagation();
+      modal.classList.remove('show');
       modal.style.display = 'none';
+      
     }
     
     window.onclick = function(event) {
       if (event.target == modal) {
+        modal.classList.remove('show');
         modal.style.display = 'none';
+
       }
     }
   </script>

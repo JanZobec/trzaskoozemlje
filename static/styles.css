@@ -223,12 +223,10 @@ label {
 
 .modal.show {
     display: block;
-    animation: fadeIn 0.3s;
+    animation: fadeIn 1s;
 }
 
-.modal.hide {
-    animation: fadeOut 0.3s;
-}
+
 
 .modal-content {
     background: rgba(255, 255, 255, 0.9);
